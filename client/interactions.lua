@@ -1,5 +1,6 @@
 -- Variables
 local isEscorting = false
+local QRCore = exports['qr-core']:GetCoreObject()
 
 -- Functions
 exports('IsHandcuffed', function()
@@ -15,7 +16,7 @@ end
 
 local function IsTargetDead(playerId)
     local retval = false
-    exports['qr-core']:TriggerCallback('police:server:isPlayerDead', function(result)
+    QRCore.Functions.TriggerCallback('police:server:isPlayerDead', function(result)
         retval = result
     end, playerId)
     Wait(100)
@@ -34,7 +35,7 @@ end)
 RegisterNetEvent('police:client:PutInVehicle', function()
     local ped = PlayerPedId()
     if isHandcuffed or isEscorted then
-        local vehicle = exports['qr-core']:GetClosestVehicle()
+        local vehicle = QRCore.Functions.GetClosestVehicle()
         if DoesEntityExist(vehicle) then
 			for i = GetVehicleMaxNumberOfPassengers(vehicle), 1, -1 do
                 if IsVehicleSeatFree(vehicle, i) then
@@ -53,46 +54,46 @@ RegisterNetEvent('police:client:PutInVehicle', function()
 end)
 
 RegisterNetEvent('police:client:SearchPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", playerId)
         TriggerServerEvent("police:server:SearchPlayer", playerId)
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:SeizeCash', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("police:server:SeizeCash", playerId)
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:SeizeDriverLicense', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("police:server:SeizeDriverLicense", playerId)
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 
 RegisterNetEvent('police:client:RobPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     local ped = PlayerPedId()
     if player ~= -1 and distance < 2.5 then
         local playerPed = GetPlayerPed(player)
         local playerId = GetPlayerServerId(player)
 
         if IsEntityPlayingAnim(playerPed, 'mech_busted@arrest', 'hands_up_transition', 3) then
-            exports['qr-core']:Progressbar("robbing_player", Lang:t("progressbar.robbing"), math.random(5000, 7000), false, true, {
+            QRCore.Functions.Progressbar("robbing_player", Lang:t("progressbar.robbing"), math.random(5000, 7000), false, true, {
                 disableMovement = true,
                 disableCarMovement = true,
                 disableMouse = false,
@@ -104,14 +105,14 @@ RegisterNetEvent('police:client:RobPlayer', function()
                     TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", playerId)
                     TriggerEvent("inventory:server:RobPlayer", playerId)
                 else
-                    exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                    QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
                 end
             end, function() -- Cancel
-                exports['qr-core']:Notify(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
             end)
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
@@ -124,73 +125,73 @@ RegisterNetEvent('police:client:BillCommand', function(playerId, price)
 end)
 
 RegisterNetEvent('police:client:JailPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         local dialogInput = LocalInput(Lang:t('info.jail_time_input'), 11)
         if tonumber(dialogInput) > 0 then
             TriggerServerEvent("police:server:JailPlayer", playerId, tonumber(dialogInput))
         else
-            exports['qr-core']:Notify(9, Lang:t("error.time_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("error.time_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:BillPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         local dialogInput = LocalInput(Lang:t('info.jail_time_input'), 11)
         if tonumber(dialogInput) > 0 then
             TriggerServerEvent("police:server:BillPlayer", playerId, tonumber(dialogInput))
         else
-            exports['qr-core']:Notify(9, Lang:t("error.amount_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("error.amount_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:PutPlayerInVehicle', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         if not isHandcuffed and not isEscorted then
             TriggerServerEvent("police:server:PutPlayerInVehicle", playerId)
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:SetPlayerOutVehicle', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         if not isHandcuffed and not isEscorted then
             TriggerServerEvent("police:server:SetPlayerOutVehicle", playerId)
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:EscortPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         if not isHandcuffed and not isEscorted then
             TriggerServerEvent("police:server:EscortPlayer", playerId)
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:KidnapPlayer', function()
-    local player, distance = exports['qr-core']:GetClosestPlayer()
+    local player, distance = QRCore.Functions.GetClosestPlayer()
     if player ~= -1 and distance < 2.5 then
         local playerId = GetPlayerServerId(player)
         if not IsPedInAnyVehicle(GetPlayerPed(player)) then
@@ -199,23 +200,23 @@ RegisterNetEvent('police:client:KidnapPlayer', function()
             end
         end
     else
-        exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:client:CuffPlayerSoft', function()
     if not IsPedRagdoll(PlayerPedId()) then
-        local player, distance = exports['qr-core']:GetClosestPlayer()
+        local player, distance = QRCore.Functions.GetClosestPlayer()
         if player ~= -1 and distance < 1.5 then
             local playerId = GetPlayerServerId(player)
             if not IsPedInAnyVehicle(GetPlayerPed(player)) and not IsPedInAnyVehicle(PlayerPedId()) then
                 TriggerServerEvent("police:server:CuffPlayer", playerId, true)
                 -- HandCuffAnimation()
             else
-                exports['qr-core']:Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
             end
         else
-            exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
         end
     else
         Wait(2000)
@@ -224,23 +225,23 @@ end)
 
 RegisterNetEvent('police:client:CuffPlayer', function()
     if not IsPedRagdoll(PlayerPedId()) then
-        local player, distance = exports['qr-core']:GetClosestPlayer()
+        local player, distance = QRCore.Functions.GetClosestPlayer()
         if player ~= -1 and distance < 1.5 then
-            exports['qr-core']:TriggerCallback('QRCore:HasItem', function(result)
+            QRCore.Functions.TriggerCallback('QRCore:HasItem', function(result)
                 if result then
                     local playerId = GetPlayerServerId(player)
                     if not IsPedInAnyVehicle(GetPlayerPed(player)) and not IsPedInAnyVehicle(PlayerPedId()) then
                         TriggerServerEvent("police:server:CuffPlayer", playerId, false)
                         -- HandCuffAnimation()
                     else
-                        exports['qr-core']:Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                        QRCore.Functions.Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
                     end
                 else
-                    exports['qr-core']:Notify(9, Lang:t("error.no_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                    QRCore.Functions.Notify(9, Lang:t("error.no_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
                 end
             end, Config.HandCuffItem)
         else
-            exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
         end
     else
         Wait(2000)
@@ -249,7 +250,7 @@ end)
 
 RegisterNetEvent('police:client:GetEscorted', function(playerId)
     local ped = PlayerPedId()
-    exports['qr-core']:GetPlayerData(function(PlayerData)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.metadata["isdead"] or isHandcuffed or PlayerData.metadata["inlaststand"] then
             if not isEscorted then
                 isEscorted = true
@@ -274,7 +275,7 @@ end)
 
 RegisterNetEvent('police:client:GetKidnappedTarget', function(playerId)
     local ped = PlayerPedId()
-    exports['qr-core']:GetPlayerData(function(PlayerData)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.metadata["isdead"] or PlayerData.metadata["inlaststand"] or isHandcuffed then
             if not isEscorted then
                 isEscorted = true
@@ -298,7 +299,7 @@ RegisterNetEvent('police:client:GetKidnappedTarget', function(playerId)
 end)
 
 RegisterNetEvent('police:client:GetKidnappedDragger', function(playerId)
-    exports['qr-core']:GetPlayerData(function(PlayerData)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
         if not isEscorting then
             draggerId = playerId
             local dragger = PlayerPedId()
@@ -332,11 +333,11 @@ RegisterNetEvent('police:client:GetCuffed', function(playerId, isSoftcuff)
         if not isSoftcuff then
             cuffType = 16
             -- GetCuffedAnimation(playerId)
-            exports['qr-core']:Notify(9, Lang:t("info.cuff"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("info.cuff"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
         else
             cuffType = 49
             -- GetCuffedAnimation(playerId)
-            exports['qr-core']:Notify(9, Lang:t("info.cuffed_walk"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("info.cuffed_walk"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
         end
     else
         isHandcuffed = false
@@ -353,7 +354,7 @@ RegisterNetEvent('police:client:GetCuffed', function(playerId, isSoftcuff)
             FreezeEntityPosition(ped, false)
         end
         -- TriggerServerEvent("InteractSound_SV:PlayOnSource", "Uncuff", 0.2)
-        exports['qr-core']:Notify(9, Lang:t("success.uncuffed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("success.uncuffed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
     end
 end)
 
@@ -390,7 +391,7 @@ CreateThread(function()
         end
 
         if isHandcuffed then
-            -- if (not IsEntityPlayingAnim(PlayerPedId(), "mp_arresting", "idle", 3) and not IsEntityPlayingAnim(PlayerPedId(), "mp_arrest_paired", "crook_p2_back_right", 3)) and not exports['qr-core']:GetPlayerData().metadata["isdead"] then
+            -- if (not IsEntityPlayingAnim(PlayerPedId(), "mp_arresting", "idle", 3) and not IsEntityPlayingAnim(PlayerPedId(), "mp_arrest_paired", "crook_p2_back_right", 3)) and not QRCore.Functions.GetPlayerData().metadata["isdead"] then
             --     loadAnimDict("mp_arresting")
             --     TaskPlayAnim(PlayerPedId(), "mp_arresting", "idle", 8.0, -8, -1, cuffType, 0, 0, 0, 0)
             -- end

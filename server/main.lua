@@ -5,14 +5,14 @@ local Casings = {}
 local BloodDrops = {}
 local FingerDrops = {}
 local Objects = {}
-local sharedItems = exports['qr-core']:GetItems()
+local QRCore = exports['qr-core']:GetCoreObject()
 
 -- Functions
 local function UpdateBlips()
     local dutyPlayers = {}
-    local players = exports['qr-core']:GetQBPlayers()
-    for k, v in pairs(players) do
-        if (v.PlayerData.job.name == "police" or v.PlayerData.job.name == "ambulance") and v.PlayerData.job.onduty then
+    local players = QRCore.Functions.GetQRPlayers()
+    for _, v in pairs(players) do
+        if v and (v.PlayerData.job.name == "police" or v.PlayerData.job.name == "ambulance") and v.PlayerData.job.onduty then
             local coords = GetEntityCoords(GetPlayerPed(v.PlayerData.source))
             local heading = GetEntityHeading(GetPlayerPed(v.PlayerData.source))
             dutyPlayers[#dutyPlayers+1] = {
@@ -90,7 +90,7 @@ end
 
 local function GetCurrentCops()
     local amount = 0
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k, v in pairs(players) do
         if v.PlayerData.job.name == "police" and v.PlayerData.job.onduty then
             amount = amount + 1
@@ -107,9 +107,9 @@ local function DnaHash(s)
 end
 
 -- Commands
-exports['qr-core']:AddCommand("pobject", Lang:t("commands.place_object"), {{name = "type",help = Lang:t("info.poobject_object")}}, true, function(source, args)
+QRCore.Commands.Add("pobject", Lang:t("commands.place_object"), {{name = "type",help = Lang:t("info.poobject_object")}}, true, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     local type = args[1]:lower()
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         if type == "cone" then
@@ -130,9 +130,9 @@ exports['qr-core']:AddCommand("pobject", Lang:t("commands.place_object"), {{name
     end
 end)
 
-exports['qr-core']:AddCommand("cuff", Lang:t("commands.cuff_player"), {}, false, function(source, args)
+QRCore.Commands.Add("cuff", Lang:t("commands.cuff_player"), {}, false, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent("police:client:CuffPlayer", src)
     else
@@ -140,20 +140,20 @@ exports['qr-core']:AddCommand("cuff", Lang:t("commands.cuff_player"), {}, false,
     end
 end)
 
-exports['qr-core']:AddCommand("escort", Lang:t("commands.escort"), {}, false, function(source, args)
+QRCore.Commands.Add("escort", Lang:t("commands.escort"), {}, false, function(source, args)
     local src = source
     TriggerClientEvent("police:client:EscortPlayer", src)
 end)
 
-exports['qr-core']:AddCommand("callsign", Lang:t("commands.callsign"), {{name = "name", help = Lang:t('info.callsign_name')}}, false, function(source, args)
+QRCore.Commands.Add("callsign", Lang:t("commands.callsign"), {{name = "name", help = Lang:t('info.callsign_name')}}, false, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     Player.Functions.SetMetaData("callsign", table.concat(args, " "))
 end)
 
-exports['qr-core']:AddCommand("clearcasings", Lang:t("commands.clear_casign"), {}, false, function(source)
+QRCore.Commands.Add("clearcasings", Lang:t("commands.clear_casign"), {}, false, function(source)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent("evidence:client:ClearCasingsInArea", src)
     else
@@ -161,9 +161,9 @@ exports['qr-core']:AddCommand("clearcasings", Lang:t("commands.clear_casign"), {
     end
 end)
 
-exports['qr-core']:AddCommand("jail", Lang:t("commands.jail_player"), {{name = "id", help = Lang:t('info.player_id')}, {name = "time", help = Lang:t('info.jail_time')}}, true, function(source, args)
+QRCore.Commands.Add("jail", Lang:t("commands.jail_player"), {{name = "id", help = Lang:t('info.player_id')}, {name = "time", help = Lang:t('info.jail_time')}}, true, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         local playerId = tonumber(args[1])
         local time = tonumber(args[2])
@@ -177,9 +177,9 @@ exports['qr-core']:AddCommand("jail", Lang:t("commands.jail_player"), {{name = "
     end
 end)
 
-exports['qr-core']:AddCommand("unjail", Lang:t("commands.unjail_player"), {{name = "id", help = Lang:t('info.player_id')}}, true, function(source, args)
+QRCore.Commands.Add("unjail", Lang:t("commands.unjail_player"), {{name = "id", help = Lang:t('info.player_id')}}, true, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         local playerId = tonumber(args[1])
         TriggerClientEvent("prison:client:UnjailPerson", playerId)
@@ -188,9 +188,9 @@ exports['qr-core']:AddCommand("unjail", Lang:t("commands.unjail_player"), {{name
     end
 end)
 
-exports['qr-core']:AddCommand("clearblood", Lang:t("commands.clearblood"), {}, false, function(source)
+QRCore.Commands.Add("clearblood", Lang:t("commands.clearblood"), {}, false, function(source)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent("evidence:client:ClearBlooddropsInArea", src)
     else
@@ -198,9 +198,9 @@ exports['qr-core']:AddCommand("clearblood", Lang:t("commands.clearblood"), {}, f
     end
 end)
 
-exports['qr-core']:AddCommand("seizecash", Lang:t("commands.seizecash"), {}, false, function(source)
+QRCore.Commands.Add("seizecash", Lang:t("commands.seizecash"), {}, false, function(source)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent("police:client:SeizeCash", src)
     else
@@ -208,9 +208,9 @@ exports['qr-core']:AddCommand("seizecash", Lang:t("commands.seizecash"), {}, fal
     end
 end)
 
-exports['qr-core']:AddCommand("sc", Lang:t("commands.softcuff"), {}, false, function(source)
+QRCore.Commands.Add("sc", Lang:t("commands.softcuff"), {}, false, function(source)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent("police:client:CuffPlayerSoft", src)
     else
@@ -218,10 +218,10 @@ exports['qr-core']:AddCommand("sc", Lang:t("commands.softcuff"), {}, false, func
     end
 end)
 
-exports['qr-core']:AddCommand("takedna", Lang:t("commands.takedna"), {{name = "id", help = Lang:t('info.player_id')}}, true, function(source, args)
+QRCore.Commands.Add("takedna", Lang:t("commands.takedna"), {{name = "id", help = Lang:t('info.player_id')}}, true, function(source, args)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local OtherPlayer = exports['qr-core']:GetPlayer(tonumber(args[1]))
+    local Player = QRCore.Functions.GetPlayer(src)
+    local OtherPlayer = QRCore.Functions.GetPlayer(tonumber(args[1]))
     if ((Player.PlayerData.job.name == "police") and Player.PlayerData.job.onduty) and OtherPlayer then
         if Player.Functions.RemoveItem("satchel", 1) then
             local info = {
@@ -230,7 +230,7 @@ exports['qr-core']:AddCommand("takedna", Lang:t("commands.takedna"), {{name = "i
                 dnalabel = DnaHash(OtherPlayer.PlayerData.citizenid)
             }
             if Player.Functions.AddItem("evidence_satchel", 1, false, info) then
-                TriggerClientEvent("inventory:client:ItemBox", src, sharedItems["evidence_satchel"], "add")
+                TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
             end
         else
             TriggerClientEvent('QRCore:Notify', src, 9, Lang:t("error.have_evidence_bag"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
@@ -239,17 +239,17 @@ exports['qr-core']:AddCommand("takedna", Lang:t("commands.takedna"), {{name = "i
 end)
 
 -- Items
-exports['qr-core']:CreateUseableItem("handcuffs", function(source, item)
+QRCore.Functions.CreateUseableItem("handcuffs", function(source, item)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.GetItemByName(item.name) then
         TriggerClientEvent("police:client:CuffPlayerSoft", src)
     end
 end)
 
-exports['qr-core']:CreateUseableItem("moneybag", function(source, item)
+QRCore.Functions.CreateUseableItem("moneybag", function(source, item)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.GetItemByName(item.name) then
         if item.info and item.info ~= "" then
             if Player.PlayerData.job.name ~= "police" then
@@ -261,9 +261,9 @@ exports['qr-core']:CreateUseableItem("moneybag", function(source, item)
     end
 end)
 
-exports['qr-core']:CreateUseableItem("evidence_satchel", function(source, item)
+QRCore.Functions.CreateUseableItem("evidence_satchel", function(source, item)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.GetItemByName(item.name) then
         if item.info and item.info ~= "" then
             if item.info.type == 'dna' then
@@ -281,13 +281,13 @@ exports['qr-core']:CreateUseableItem("evidence_satchel", function(source, item)
 end)
 
 -- Callbacks
-exports['qr-core']:CreateCallback('police:server:isPlayerDead', function(source, cb, playerId)
-    local Player = exports['qr-core']:GetPlayer(playerId)
+QRCore.Functions.CreateCallback('police:server:isPlayerDead', function(source, cb, playerId)
+    local Player = QRCore.Functions.GetPlayer(playerId)
     cb(Player.PlayerData.metadata["isdead"])
 end)
 
-exports['qr-core']:CreateCallback('police:GetPlayerStatus', function(source, cb, playerId)
-    local Player = exports['qr-core']:GetPlayer(playerId)
+QRCore.Functions.CreateCallback('police:GetPlayerStatus', function(source, cb, playerId)
+    local Player = QRCore.Functions.GetPlayer(playerId)
     local statList = {}
     if Player then
         if PlayerStatus[Player.PlayerData.source] and next(PlayerStatus[Player.PlayerData.source]) then
@@ -299,9 +299,9 @@ exports['qr-core']:CreateCallback('police:GetPlayerStatus', function(source, cb,
     cb(statList)
 end)
 
-exports['qr-core']:CreateCallback('police:GetDutyPlayers', function(source, cb)
+QRCore.Functions.CreateCallback('police:GetDutyPlayers', function(source, cb)
     local dutyPlayers = {}
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k, v in pairs(players) do
         if v.PlayerData.job.name == "police" and v.PlayerData.job.onduty then
             dutyPlayers[#dutyPlayers+1] = {
@@ -314,9 +314,9 @@ exports['qr-core']:CreateCallback('police:GetDutyPlayers', function(source, cb)
     cb(dutyPlayers)
 end)
 
-exports['qr-core']:CreateCallback('police:GetCops', function(source, cb)
+QRCore.Functions.CreateCallback('police:GetCops', function(source, cb)
     local amount = 0
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k, v in pairs(players) do
         if v.PlayerData.job.name == "police" and v.PlayerData.job.onduty then
             amount = amount + 1
@@ -325,9 +325,9 @@ exports['qr-core']:CreateCallback('police:GetCops', function(source, cb)
     cb(amount)
 end)
 
-exports['qr-core']:CreateCallback('police:server:IsPoliceForcePresent', function(source, cb)
+QRCore.Functions.CreateCallback('police:server:IsPoliceForcePresent', function(source, cb)
     local retval = false
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k, v in pairs(players) do
         if v.PlayerData.job.name == "police" and v.PlayerData.job.grade.level >= 2 then
             retval = true
@@ -350,7 +350,7 @@ RegisterNetEvent('police:server:policeAlert', function(text)
     local src = source
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'police' and v.PlayerData.job.onduty then
             local alertData = {title = Lang:t('info.new_call'), coords = {coords.x, coords.y, coords.z}, description = text}
@@ -362,8 +362,8 @@ end)
 
 RegisterNetEvent('police:server:CuffPlayer', function(playerId, isSoftcuff)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local CuffedPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(src)
+    local CuffedPlayer = QRCore.Functions.GetPlayer(playerId)
     if CuffedPlayer then
         if Player.Functions.GetItemByName("handcuffs") or Player.PlayerData.job.name == "police" then
             TriggerClientEvent("police:client:GetCuffed", CuffedPlayer.PlayerData.source, Player.PlayerData.source, isSoftcuff)
@@ -373,8 +373,8 @@ end)
 
 RegisterNetEvent('police:server:EscortPlayer', function(playerId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(source)
-    local EscortPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(source)
+    local EscortPlayer = QRCore.Functions.GetPlayer(playerId)
     if EscortPlayer then
         if (Player.PlayerData.job.name == "police" or Player.PlayerData.job.name == "ambulance") or (EscortPlayer.PlayerData.metadata["ishandcuffed"] or EscortPlayer.PlayerData.metadata["isdead"] or EscortPlayer.PlayerData.metadata["inlaststand"]) then
             TriggerClientEvent("police:client:GetEscorted", EscortPlayer.PlayerData.source, Player.PlayerData.source)
@@ -386,8 +386,8 @@ end)
 
 RegisterNetEvent('police:server:KidnapPlayer', function(playerId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(source)
-    local EscortPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(source)
+    local EscortPlayer = QRCore.Functions.GetPlayer(playerId)
     if EscortPlayer then
         if EscortPlayer.PlayerData.metadata["ishandcuffed"] or EscortPlayer.PlayerData.metadata["isdead"] or
             EscortPlayer.PlayerData.metadata["inlaststand"] then
@@ -401,8 +401,8 @@ end)
 
 RegisterNetEvent('police:server:SetPlayerOutVehicle', function(playerId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(source)
-    local EscortPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(source)
+    local EscortPlayer = QRCore.Functions.GetPlayer(playerId)
     if EscortPlayer then
         if EscortPlayer.PlayerData.metadata["ishandcuffed"] or EscortPlayer.PlayerData.metadata["isdead"] then
             TriggerClientEvent("police:client:SetOutVehicle", EscortPlayer.PlayerData.source)
@@ -414,7 +414,7 @@ end)
 
 RegisterNetEvent('police:server:PutPlayerInVehicle', function(playerId)
     local src = source
-    local EscortPlayer = exports['qr-core']:GetPlayer(playerId)
+    local EscortPlayer = QRCore.Functions.GetPlayer(playerId)
     if EscortPlayer then
         if EscortPlayer.PlayerData.metadata["ishandcuffed"] or EscortPlayer.PlayerData.metadata["isdead"] then
             TriggerClientEvent("police:client:PutInVehicle", EscortPlayer.PlayerData.source)
@@ -426,8 +426,8 @@ end)
 
 RegisterNetEvent('police:server:BillPlayer', function(playerId, price)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local OtherPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(src)
+    local OtherPlayer = QRCore.Functions.GetPlayer(playerId)
     if Player.PlayerData.job.name == "police" then
         if OtherPlayer then
             OtherPlayer.Functions.RemoveMoney("bank", price, "paid-bills")
@@ -439,8 +439,8 @@ end)
 
 RegisterNetEvent('police:server:JailPlayer', function(playerId, time)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local OtherPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(src)
+    local OtherPlayer = QRCore.Functions.GetPlayer(playerId)
     local currentDate = os.date("*t")
     if currentDate.day == 31 then
         currentDate.day = 30
@@ -461,7 +461,7 @@ end)
 
 RegisterNetEvent('police:server:SetHandcuffStatus', function(isHandcuffed)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player then
         Player.Functions.SetMetaData("ishandcuffed", isHandcuffed)
     end
@@ -469,7 +469,7 @@ end)
 
 RegisterNetEvent('police:server:SearchPlayer', function(playerId)
     local src = source
-    local SearchedPlayer = exports['qr-core']:GetPlayer(playerId)
+    local SearchedPlayer = QRCore.Functions.GetPlayer(playerId)
     if SearchedPlayer then
         TriggerClientEvent('QRCore:Notify', src, 9, Lang:t("info.cash_found", {cash = SearchedPlayer.PlayerData.money["cash"]}), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
         TriggerClientEvent('QRCore:Notify', SearchedPlayer.PlayerData.source, Lang:t("info.being_searched"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
@@ -478,22 +478,22 @@ end)
 
 RegisterNetEvent('police:server:SeizeCash', function(playerId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local SearchedPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(src)
+    local SearchedPlayer = QRCore.Functions.GetPlayer(playerId)
     if SearchedPlayer then
         local moneyAmount = SearchedPlayer.PlayerData.money["cash"]
         local info = { cash = moneyAmount }
         SearchedPlayer.Functions.RemoveMoney("cash", moneyAmount, "police-cash-seized")
         Player.Functions.AddItem("moneybag", 1, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, sharedItems["moneybag"], "add")
+        TriggerClientEvent('inventory:client:ItemBox', src, QRCore.Shared.Items["moneybag"], "add")
         TriggerClientEvent('QRCore:Notify', SearchedPlayer.PlayerData.source, Lang:t("info.cash_confiscated"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
     end
 end)
 
 RegisterNetEvent('police:server:RobPlayer', function(playerId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
-    local SearchedPlayer = exports['qr-core']:GetPlayer(playerId)
+    local Player = QRCore.Functions.GetPlayer(src)
+    local SearchedPlayer = QRCore.Functions.GetPlayer(playerId)
     if SearchedPlayer then
         local money = SearchedPlayer.PlayerData.money["cash"]
         Player.Functions.AddMoney("cash", money, "police-player-robbed")
@@ -534,7 +534,7 @@ end)
 
 RegisterNetEvent('evidence:server:CreateFingerDrop', function(coords)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     local fingerId = CreateFingerId()
     FingerDrops[fingerId] = Player.PlayerData.metadata["fingerprint"]
     TriggerClientEvent("evidence:client:AddFingerPrint", -1, fingerId, Player.PlayerData.metadata["fingerprint"], coords)
@@ -551,10 +551,10 @@ end)
 
 RegisterNetEvent('evidence:server:AddBlooddropToInventory', function(bloodId, bloodInfo)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, bloodInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, sharedItems["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
             TriggerClientEvent("evidence:client:RemoveBlooddrop", -1, bloodId)
             BloodDrops[bloodId] = nil
         end
@@ -565,10 +565,10 @@ end)
 
 RegisterNetEvent('evidence:server:AddFingerprintToInventory', function(fingerId, fingerInfo)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, fingerInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, sharedItems["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
             TriggerClientEvent("evidence:client:RemoveFingerprint", -1, fingerId)
             FingerDrops[fingerId] = nil
         end
@@ -579,10 +579,9 @@ end)
 
 RegisterNetEvent('evidence:server:CreateCasing', function(weapon, coords)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     local casingId = CreateCasingId()
-    local sharedWeapons = exports['qr-core']:GetWeapons()
-    local weaponInfo = sharedWeapons[weapon]
+    local weaponInfo = QRCore.Shared.Weapons[weapon]
     local serieNumber = nil
     if weaponInfo then
         local weaponItem = Player.Functions.GetItemByName(weaponInfo["name"])
@@ -597,7 +596,7 @@ end)
 
 RegisterNetEvent('police:server:UpdateCurrentCops', function()
     local amount = 0
-    local players = exports['qr-core']:GetQBPlayers()
+    local players = QRCore.Functions.GetQRPlayers()
     for k, v in pairs(players) do
         if v.PlayerData.job.name == "police" and v.PlayerData.job.onduty then
             amount = amount + 1
@@ -617,10 +616,10 @@ end)
 
 RegisterNetEvent('evidence:server:AddCasingToInventory', function(casingId, casingInfo)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, casingInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, sharedItems["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
             TriggerClientEvent("evidence:client:RemoveCasing", -1, casingId)
             Casings[casingId] = nil
         end
@@ -637,7 +636,7 @@ end)
 
 RegisterNetEvent('police:server:showFingerprintId', function(sessionId)
     local src = source
-    local Player = exports['qr-core']:GetPlayer(src)
+    local Player = QRCore.Functions.GetPlayer(src)
     local fid = Player.PlayerData.metadata["fingerprint"]
     TriggerClientEvent('police:client:showFingerprintId', sessionId, fid)
     TriggerClientEvent('police:client:showFingerprintId', src, fid)

@@ -1,4 +1,5 @@
 -- Variables
+QRCore = exports['qr-core']:GetCoreObject()
 
 isHandcuffed = false
 cuffType = 1
@@ -47,7 +48,7 @@ end
 
 -- Events
 AddEventHandler('QRCore:Client:OnPlayerLoaded', function()
-    local player = exports['qr-core']:GetPlayerData()
+    local player = QRCore.Functions.GetPlayerData()
     PlayerJob = player.job
     onDuty = player.job.onduty
     isHandcuffed = false
@@ -111,10 +112,10 @@ end)
 RegisterNetEvent('police:client:sendBillingMail', function(amount)
     SetTimeout(math.random(2500, 4000), function()
         local gender = Lang:t('info.mr')
-        if exports['qr-core']:GetPlayerData().charinfo.gender == 1 then
+        if QRCore.Functions.GetPlayerData().charinfo.gender == 1 then
             gender = Lang:t('info.mrs')
         end
-        local charinfo = exports['qr-core']:GetPlayerData().charinfo
+        local charinfo = QRCore.Functions.GetPlayerData().charinfo
         TriggerServerEvent('qr-phone:server:sendNewMail', {
             sender = Lang:t('email.sender'),
             subject = Lang:t('email.subject'),
@@ -144,7 +145,7 @@ RegisterNetEvent('police:client:UpdateBlips', function(players)
 end)
 
 RegisterNetEvent('police:client:policeAlert', function(coords, text)
-    exports['qr-core']:Notify(9, {text = text, caption = street1name.. ' ' ..street2name}, 'police')
+    QRCore.Functions.Notify(9, {text = text, caption = street1name.. ' ' ..street2name}, 'police')
     local transG = 250
 
     local blip = Citizen.InvokeNative(0x554D9D53F696D002, 1664425300, coords.x, coords.y, coords.z)
@@ -177,7 +178,7 @@ RegisterNetEvent('police:client:SendToJail', function(time)
 end)
 
 RegisterNetEvent('police:client:SendPoliceEmergencyAlert', function()
-    local Player = exports['qr-core']:GetPlayerData()
+    local Player = QRCore.Functions.GetPlayerData()
     TriggerServerEvent('police:server:policeAlert', Lang:t('info.officer_down', {lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign}))
     TriggerServerEvent('hospital:server:ambulanceAlert', Lang:t('info.officer_down', {lastname = Player.charinfo.lastname, callsign = Player.metadata.callsign}))
 end)

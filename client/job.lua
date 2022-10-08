@@ -2,6 +2,7 @@
 local currentGarage = 0
 local inFingerprint = false
 local FingerPrintSessionId = nil
+local QRCore = exports['qr-core']:GetCoreObject()
 
 -- Functions
 -- local function DrawText3D(x, y, z, text)
@@ -61,7 +62,7 @@ local function loadAnimDict(dict) -- interactions, job,
 end
 
 local function GetClosestPlayer() -- interactions, job, tracker
-    local closestPlayers = exports['qr-core']:GetPlayersFromCoords()
+    local closestPlayers = QRCore.Functions.GetPlayersFromCoords()
     local closestDistance = -1
     local closestPlayer = -1
     local coords = GetEntityCoords(PlayerPedId())
@@ -84,7 +85,7 @@ end
 local function IsArmoryWhitelist() -- being removed
     local retval = false
 
-    if exports['qr-core']:GetPlayerData().job.name == 'police' then
+    if QRCore.Functions.GetPlayerData().job.name == 'police' then
         retval = true
     end
     return retval
@@ -93,13 +94,13 @@ end
 local function SetWeaponSeries()
     for k, v in pairs(Config.Items.items) do
         if k < 6 then
-            Config.Items.items[k].info.serie = tostring(exports['qr-core']:RandomInt(2) .. exports['qr-core']:RandomStr(3) .. exports['qr-core']:RandomInt(1) .. exports['qr-core']:RandomStr(2) .. exports['qr-core']:RandomInt(3) .. exports['qr-core']:RandomStr(4))
+            Config.Items.items[k].info.serie = tostring(QRCore.Shared.RandomInt(2) .. QRCore.Shared.RandomStr(3) .. QRCore.Shared.RandomInt(1) .. QRCore.Shared.RandomStr(2) .. QRCore.Shared.RandomInt(3) .. QRCore.Shared.RandomStr(4))
         end
     end
 end
 
 RegisterNetEvent('police:client:ImpoundVehicle', function(fullImpound, price)
-    local vehicle = exports['qr-core']:GetClosestVehicle()
+    local vehicle = QRCore.Functions.GetClosestVehicle()
     local bodyDamage = math.ceil(GetVehicleBodyHealth(vehicle))
     local engineDamage = math.ceil(GetVehicleEngineHealth(vehicle))
     local totalFuel = exports['LegacyFuel']:GetFuel(vehicle)
@@ -108,28 +109,28 @@ RegisterNetEvent('police:client:ImpoundVehicle', function(fullImpound, price)
         local pos = GetEntityCoords(ped)
         local vehpos = GetEntityCoords(vehicle)
         if #(pos - vehpos) < 5.0 and not IsPedInAnyVehicle(ped) then
-            local plate = exports['qr-core']:GetPlate(vehicle)
+            local plate = QRCore.Functions.GetPlate(vehicle)
             TriggerServerEvent("police:server:Impound", plate, fullImpound, price, bodyDamage, engineDamage, totalFuel)
-            exports['qr-core']:DeleteVehicle(vehicle)
+            QRCore.Functions.DeleteVehicle(vehicle)
         end
     end
 end)
 
 RegisterNetEvent('police:client:CheckStatus', function()
-    exports['qr-core']:GetPlayerData(function(PlayerData)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
         if PlayerData.job.name == "police" then
             local player, distance = GetClosestPlayer()
             if player ~= -1 and distance < 5.0 then
                 local playerId = GetPlayerServerId(player)
-                exports['qr-core']:TriggerCallback('police:GetPlayerStatus', function(result)
+                QRCore.Functions.TriggerCallback('police:GetPlayerStatus', function(result)
                     if result then
                         for k, v in pairs(result) do
-                            exports['qr-core']:Notify(9, ''..v..'')
+                            QRCore.Functions.Notify(9, ''..v..'')
                         end
                     end
                 end, playerId)
             else
-                exports['qr-core']:Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
             end
         end
     end)
@@ -163,8 +164,8 @@ RegisterNetEvent('qr-policejob:ToggleDuty', function()
 end)
 
 RegisterNetEvent('police:client:OpenPersonalStash', function()
-    TriggerServerEvent("inventory:server:OpenInventory", "stash", "policestash_"..exports['qr-core']:GetPlayerData().citizenid)
-    TriggerEvent("inventory:client:SetCurrentStash", "policestash_"..exports['qr-core']:GetPlayerData().citizenid)
+    TriggerServerEvent("inventory:server:OpenInventory", "stash", "policestash_"..QRCore.Functions.GetPlayerData().citizenid)
+    TriggerEvent("inventory:client:SetCurrentStash", "policestash_"..QRCore.Functions.GetPlayerData().citizenid)
 end)
 
 RegisterNetEvent('police:client:OpenPersonalTrash', function()
@@ -211,16 +212,14 @@ CreateThread(function()
         Citizen.InvokeNative(0x9CB1A1623062F402, StationBlip, v.label)
         -- Citizen.ReturnResultAnyway()
     end
-    local sharedItems = exports['qr-core']:GetItems()
-    local sharedWeapons = exports['qr-core']:GetWeapons()
-    for k,v in pairs(sharedWeapons) do
+    for k,v in pairs(QRCore.Shared.Weapons) do
         local weaponName = v.name
         local weaponLabel = v.label
         local weaponHash = GetHashKey(v.name)
         local weaponAmmo, weaponAmmoLabel = nil, 'unknown'
         if v.ammotype then
             weaponAmmo = v.ammotype:lower()
-            weaponAmmoLabel = sharedItems[weaponAmmo].label
+            weaponAmmoLabel = QRCore.Shared.Items[weaponAmmo].label
         end
 
         print(weaponHash, weaponName, weaponLabel, weaponAmmo, weaponAmmoLabel)

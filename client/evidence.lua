@@ -1,3 +1,5 @@
+local QRCore = exports['qr-core']:GetCoreObject()
+
 -- Variables
 local CurrentStatusList = {}
 local Casings = {}
@@ -82,7 +84,7 @@ RegisterNetEvent('evidence:client:SetStatus', function(statusId, time)
                 text = StatusList[statusId],
                 time = time
             }
-            exports['qr-core']:Notify(9, CurrentStatusList[statusId].text, 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, CurrentStatusList[statusId].text, 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
         end
     elseif StatusList[statusId] then
         CurrentStatusList[statusId] = nil
@@ -126,7 +128,7 @@ end)
 RegisterNetEvent('evidence:client:ClearBlooddropsInArea', function()
     local pos = GetEntityCoords(PlayerPedId())
     local blooddropList = {}
-    exports['qr-core']:Progressbar('clear_blooddrops', Lang:t("progressbar.blood_clear"), 5000, false, true, {
+    QRCore.Functions.Progressbar('clear_blooddrops', Lang:t("progressbar.blood_clear"), 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -141,10 +143,10 @@ RegisterNetEvent('evidence:client:ClearBlooddropsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearBlooddrops', blooddropList)
-            exports['qr-core']:Notify(9, Lang:t("success.blood_clear"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("success.blood_clear"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
         end
     end, function() -- Cancel
-        exports['qr-core']:Notify(9, Lang:t("error.blood_not_cleared"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.blood_not_cleared"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end)
 end)
 
@@ -168,7 +170,7 @@ end)
 RegisterNetEvent('evidence:client:ClearCasingsInArea', function()
     local pos = GetEntityCoords(PlayerPedId())
     local casingList = {}
-    exports['qr-core']:Progressbar('clear_casings', Lang:t("progressbar.bullet_casing"), 5000, false, true, {
+    QRCore.Functions.Progressbar('clear_casings', Lang:t("progressbar.bullet_casing"), 5000, false, true, {
         disableMovement = false,
         disableCarMovement = false,
         disableMouse = false,
@@ -182,11 +184,11 @@ RegisterNetEvent('evidence:client:ClearCasingsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearCasings', casingList)
-            exports['qr-core']:Notify(9, Lang:t("success.bullet_casing_removed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+            QRCore.Functions.Notify(9, Lang:t("success.bullet_casing_removed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
 
         end
     end, function() -- Cancel
-        exports['qr-core']:Notify(9, Lang:t("error.bullet_casing_not_removed"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(9, Lang:t("error.bullet_casing_not_removed"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
     end)
 end)
 

@@ -1,8 +1,10 @@
 -- Variables
-local currentGarage = 0
+local currentGarage = 1
 local inFingerprint = false
 local FingerPrintSessionId = nil
 local QRCore = exports['qr-core']:GetCoreObject()
+local PlayerJob = {}
+local onDuty = false
 
 -- Functions
 -- local function DrawText3D(x, y, z, text)
@@ -20,6 +22,59 @@ local QRCore = exports['qr-core']:GetCoreObject()
 --     ClearDrawOrigin()
 -- end
 
+local function DrawText3D(x, y, z, text)
+    local onScreen,_x,_y=GetScreenCoordFromWorldCoord(x, y, z)
+
+    SetTextScale(0.35, 0.35)
+    SetTextFontForCurrentCommand(1)
+    SetTextColor(255, 255, 255, 215)
+    local str = CreateVarString(10, "LITERAL_STRING", text, Citizen.ResultAsLong())
+    SetTextCentre(1)
+    DisplayText(str,_x,_y)
+end
+
+function TakeOutVehicle(vehicleInfo)
+    local coords = Config.Locations["vehicle"][currentGarage]
+    QRCore.Functions.SpawnVehicle(vehicleInfo, function(veh)
+        SetEntityHeading(veh, coords.w)
+        TaskWarpPedIntoVehicle(PlayerPedId(), veh, -1)
+	Citizen.InvokeNative(0x400F9556,veh, Lang:t('info.police_plate')..tostring(math.random(1000, 9999)))
+        SetVehicleEngineOn(veh, true, true)
+    end, coords, true)
+end
+
+function MenuGarage()
+    local vehicleMenu = {
+        {
+            header = Lang:t('menu.garage_title'),
+            isMenuHeader = true
+        }
+    }
+
+    local authorizedVehicles = Config.AuthorizedVehicles[QRCore.Functions.GetPlayerData().job.grade.level]
+    for veh, label in pairs(authorizedVehicles) do
+        vehicleMenu[#vehicleMenu+1] = {
+            header = label,
+            txt = "",
+            params = {
+                event = "police:client:TakeOutVehicle",
+                args = {
+                    vehicle = veh
+                }
+            }
+        }
+    end
+    vehicleMenu[#vehicleMenu+1] = {
+        header = Lang:t('menu.close'),
+        txt = "",
+        params = {
+            event = "qr-menu:client:closeMenu"
+        }
+
+    }
+    exports['qr-menu']:openMenu(vehicleMenu)
+end
+
 function CreatePrompts()
     for k,v in pairs(Config.Locations['duty']) do
         exports['qr-core']:createPrompt('duty_prompt_' .. k, v, 0xF3830D8E, 'Toggle duty status', {
@@ -28,6 +83,14 @@ function CreatePrompts()
             args = {},
         })
     end
+    
+    for k, v in pairs(Config.Locations["vehicle"]) do
+        exports['qr-core']:createPrompt("police:vehicle_"..k, vector3(v.x, v.y, v.z), Config.PromptKey, 'Jobgarage', {
+            type = 'client',
+            event = 'police:client:promptVehicle',
+            args = {k},
+        })
+    end   
 
     for k,v in pairs(Config.Locations['evidence']) do
         exports['qr-core']:createPrompt('evidence_prompt_' .. k, v, 0xF3830D8E, 'Open Evidence Stash', {
@@ -99,6 +162,25 @@ local function SetWeaponSeries()
     end
 end
 
+RegisterNetEvent('police:client:promptVehicle', function(k)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
+        PlayerJob = PlayerData.job
+        onDuty = PlayerData.job.onduty
+        local ped = PlayerPedId()
+
+        if PlayerJob.name == "police"  then
+            if IsPedInAnyVehicle(ped, false) then
+                QRCore.Functions.DeleteVehicle(GetVehiclePedIsIn(ped))
+            else
+                MenuGarage()
+                currentGarage = k
+            end
+        else
+            QRCore.Functions.Notify(Lang:t('error.not_lawyer'), 'error')
+        end
+    end)
+end)
+
 RegisterNetEvent('police:client:ImpoundVehicle', function(fullImpound, price)
     local vehicle = QRCore.Functions.GetClosestVehicle()
     local bodyDamage = math.ceil(GetVehicleBodyHealth(vehicle))
@@ -163,6 +245,11 @@ RegisterNetEvent('qr-policejob:ToggleDuty', function()
     TriggerServerEvent("QRCore:ToggleDuty")
 end)
 
+RegisterNetEvent('police:client:TakeOutVehicle', function(data)
+    local vehicle = data.vehicle
+    TakeOutVehicle(vehicle)
+end)
+
 RegisterNetEvent('police:client:OpenPersonalStash', function()
     TriggerServerEvent("inventory:server:OpenInventory", "stash", "policestash_"..QRCore.Functions.GetPlayerData().citizenid)
     TriggerEvent("inventory:client:SetCurrentStash", "policestash_"..QRCore.Functions.GetPlayerData().citizenid)
@@ -205,7 +292,7 @@ CreateThread(function()
     end
 
     for k, v in pairs(Config.Locations["stations"]) do
-        print(v.coords, v.label)
+        --print(v.coords, v.label)
         local StationBlip = N_0x554d9d53f696d002(1664425300, v.coords)
         SetBlipSprite(StationBlip, -693644997, 52)
         SetBlipScale(StationBlip, 0.7)
@@ -222,7 +309,7 @@ CreateThread(function()
             weaponAmmoLabel = QRCore.Shared.Items[weaponAmmo].label
         end
 
-        print(weaponHash, weaponName, weaponLabel, weaponAmmo, weaponAmmoLabel)
+        --print(weaponHash, weaponName, weaponLabel, weaponAmmo, weaponAmmoLabel)
 
         Config.WeaponHashes[weaponHash] = {
             weaponName = weaponName,

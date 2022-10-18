@@ -111,23 +111,20 @@ QRCore.Commands.Add("pobject", Lang:t("commands.place_object"), {{name = "type",
     local src = source
     local Player = QRCore.Functions.GetPlayer(src)
     local type = args[1]:lower()
-    if Player.PlayerData.job.name == "police" and Player.PlayerData.job.onduty then
-        if type == "cone" then
-            TriggerClientEvent("police:client:spawnCone", src)
-        elseif type == "barrier" then
-            TriggerClientEvent("police:client:spawnBarrier", src)
-        elseif type == "roadsign" then
-            TriggerClientEvent("police:client:spawnRoadSign", src)
-        elseif type == "tent" then
-            TriggerClientEvent("police:client:spawnTent", src)
-        elseif type == "light" then
-            TriggerClientEvent("police:client:spawnLight", src)
-        elseif type == "delete" then
-            TriggerClientEvent("police:client:deleteObject", src)
-        end
-    else
+    if Player.PlayerData.job.name ~= "police" and Player.PlayerData.job.onduty then
         TriggerClientEvent('QRCore:Notify', src, 9, Lang:t("error.on_duty_police_only"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        return
     end
+    
+    if type == "delete" then
+        TriggerClientEvent("police:client:DeleteObject", src)
+        return
+    end
+
+    if Config.Objects[type] then
+        TriggerClientEvent("police:client:SpawnPObj", src, type)
+    end
+    
 end)
 
 QRCore.Commands.Add("cuff", Lang:t("commands.cuff_player"), {}, false, function(source, args)

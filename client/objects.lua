@@ -59,7 +59,7 @@ local function DrawText3D(x, y, z, text)
 end
 
 -- Events
-RegisterNetEvent('police:client:spawnCone', function()
+RegisterNetEvent('police:client:spawnPObj', function(item)
     QRCore.Functions.Progressbar("spawn_object", Lang:t("progressbar.place_object"), 2500, false, true, {
         disableMovement = true,
         disableCarMovement = true,
@@ -71,83 +71,7 @@ RegisterNetEvent('police:client:spawnCone', function()
         flags = 16,
     }, {}, {}, function() -- Done
         StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("police:server:spawnObject", "cone")
-    end, function() -- Cancel
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
-    end)
-end)
-
-RegisterNetEvent('police:client:spawnBarrier', function()
-    QRCore.Functions.Progressbar("spawn_object", Lang:t("progressbar.place_object"), 2500, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "anim@narcotics@trash",
-        anim = "drop_front",
-        flags = 16,
-    }, {}, {}, function() -- Done
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("police:server:spawnObject", "barrier")
-    end, function() -- Cancel
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
-    end)
-end)
-
-RegisterNetEvent('police:client:spawnRoadSign', function()
-    QRCore.Functions.Progressbar("spawn_object", Lang:t("progressbar.place_object"), 2500, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "anim@narcotics@trash",
-        anim = "drop_front",
-        flags = 16,
-    }, {}, {}, function() -- Done
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("police:server:spawnObject", "roadsign")
-    end, function() -- Cancel
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
-    end)
-end)
-
-RegisterNetEvent('police:client:spawnTent', function()
-    QRCore.Functions.Progressbar("spawn_object", Lang:t("progressbar.place_object"), 2500, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "anim@narcotics@trash",
-        anim = "drop_front",
-        flags = 16,
-    }, {}, {}, function() -- Done
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("police:server:spawnObject", "tent")
-    end, function() -- Cancel
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
-    end)
-end)
-
-RegisterNetEvent('police:client:spawnLight', function()
-    QRCore.Functions.Progressbar("spawn_object", Lang:t("progressbar.place_object"), 2500, false, true, {
-        disableMovement = true,
-        disableCarMovement = true,
-        disableMouse = false,
-        disableCombat = true,
-    }, {
-        animDict = "anim@narcotics@trash",
-        anim = "drop_front",
-        flags = 16,
-    }, {}, {}, function() -- Done
-        StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        TriggerServerEvent("police:server:spawnObject", "light")
+        TriggerServerEvent("police:server:spawnObject", item)
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
         QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')

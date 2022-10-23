@@ -84,7 +84,7 @@ RegisterNetEvent('evidence:client:SetStatus', function(statusId, time)
                 text = StatusList[statusId],
                 time = time
             }
-            QRCore.Functions.Notify(9, CurrentStatusList[statusId].text, 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(CurrentStatusList[statusId].text, 'primary')
         end
     elseif StatusList[statusId] then
         CurrentStatusList[statusId] = nil
@@ -143,10 +143,10 @@ RegisterNetEvent('evidence:client:ClearBlooddropsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearBlooddrops', blooddropList)
-            QRCore.Functions.Notify(9, Lang:t("success.blood_clear"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("success.blood_clear"), 'success')
         end
     end, function() -- Cancel
-        QRCore.Functions.Notify(9, Lang:t("error.blood_not_cleared"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.blood_not_cleared"), 'error')
     end)
 end)
 
@@ -184,11 +184,11 @@ RegisterNetEvent('evidence:client:ClearCasingsInArea', function()
                 end
             end
             TriggerServerEvent('evidence:server:ClearCasings', casingList)
-            QRCore.Functions.Notify(9, Lang:t("success.bullet_casing_removed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("success.bullet_casing_removed"), 'success')
 
         end
     end, function() -- Cancel
-        QRCore.Functions.Notify(9, Lang:t("error.bullet_casing_not_removed"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.bullet_casing_not_removed"), 'error')
     end)
 end)
 

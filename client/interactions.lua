@@ -60,7 +60,7 @@ RegisterNetEvent('police:client:SearchPlayer', function()
         TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", playerId)
         TriggerServerEvent("police:server:SearchPlayer", playerId)
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -70,7 +70,7 @@ RegisterNetEvent('police:client:SeizeCash', function()
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("police:server:SeizeCash", playerId)
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -80,7 +80,7 @@ RegisterNetEvent('police:client:SeizeDriverLicense', function()
         local playerId = GetPlayerServerId(player)
         TriggerServerEvent("police:server:SeizeDriverLicense", playerId)
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -105,14 +105,14 @@ RegisterNetEvent('police:client:RobPlayer', function()
                     TriggerServerEvent("inventory:server:OpenInventory", "otherplayer", playerId)
                     TriggerEvent("inventory:server:RobPlayer", playerId)
                 else
-                    QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                    QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
                 end
             end, function() -- Cancel
-                QRCore.Functions.Notify(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(Lang:t("error.canceled"), 'error')
             end)
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -132,10 +132,10 @@ RegisterNetEvent('police:client:JailPlayer', function()
         if tonumber(dialogInput) > 0 then
             TriggerServerEvent("police:server:JailPlayer", playerId, tonumber(dialogInput))
         else
-            QRCore.Functions.Notify(9, Lang:t("error.time_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("error.time_higher"), 'error')
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -147,10 +147,10 @@ RegisterNetEvent('police:client:BillPlayer', function()
         if tonumber(dialogInput) > 0 then
             TriggerServerEvent("police:server:BillPlayer", playerId, tonumber(dialogInput))
         else
-            QRCore.Functions.Notify(9, Lang:t("error.amount_higher"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("error.amount_higher"), 'error')
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -162,7 +162,7 @@ RegisterNetEvent('police:client:PutPlayerInVehicle', function()
             TriggerServerEvent("police:server:PutPlayerInVehicle", playerId)
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -174,7 +174,7 @@ RegisterNetEvent('police:client:SetPlayerOutVehicle', function()
             TriggerServerEvent("police:server:SetPlayerOutVehicle", playerId)
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -186,7 +186,7 @@ RegisterNetEvent('police:client:EscortPlayer', function()
             TriggerServerEvent("police:server:EscortPlayer", playerId)
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -200,7 +200,7 @@ RegisterNetEvent('police:client:KidnapPlayer', function()
             end
         end
     else
-        QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
     end
 end)
 
@@ -213,10 +213,10 @@ RegisterNetEvent('police:client:CuffPlayerSoft', function()
                 TriggerServerEvent("police:server:CuffPlayer", playerId, true)
                 -- HandCuffAnimation()
             else
-                QRCore.Functions.Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(Lang:t("error.vehicle_cuff"), 'error')
             end
         else
-            QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
         end
     else
         Wait(2000)
@@ -234,14 +234,14 @@ RegisterNetEvent('police:client:CuffPlayer', function()
                         TriggerServerEvent("police:server:CuffPlayer", playerId, false)
                         -- HandCuffAnimation()
                     else
-                        QRCore.Functions.Notify(9, Lang:t("error.vehicle_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                        QRCore.Functions.Notify(Lang:t("error.vehicle_cuff"), 'error')
                     end
                 else
-                    QRCore.Functions.Notify(9, Lang:t("error.no_cuff"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                    QRCore.Functions.Notify(Lang:t("error.no_cuff"), 'error')
                 end
             end, Config.HandCuffItem)
         else
-            QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
         end
     else
         Wait(2000)
@@ -333,11 +333,11 @@ RegisterNetEvent('police:client:GetCuffed', function(playerId, isSoftcuff)
         if not isSoftcuff then
             cuffType = 16
             -- GetCuffedAnimation(playerId)
-            QRCore.Functions.Notify(9, Lang:t("info.cuff"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("info.cuff"), 'primary')
         else
             cuffType = 49
             -- GetCuffedAnimation(playerId)
-            QRCore.Functions.Notify(9, Lang:t("info.cuffed_walk"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("info.cuffed_walk"), 'primary')
         end
     else
         isHandcuffed = false
@@ -354,7 +354,7 @@ RegisterNetEvent('police:client:GetCuffed', function(playerId, isSoftcuff)
             FreezeEntityPosition(ped, false)
         end
         -- TriggerServerEvent("InteractSound_SV:PlayOnSource", "Uncuff", 0.2)
-        QRCore.Functions.Notify(9, Lang:t("success.uncuffed"), 5000, 0, 'hud_textures', 'check', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("success.uncuffed"), 'success')
     end
 end)
 

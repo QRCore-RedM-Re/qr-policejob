@@ -207,12 +207,12 @@ RegisterNetEvent('police:client:CheckStatus', function()
                 QRCore.Functions.TriggerCallback('police:GetPlayerStatus', function(result)
                     if result then
                         for k, v in pairs(result) do
-                            QRCore.Functions.Notify(9, ''..v..'')
+                            QRCore.Functions.Notify(''..v..'')
                         end
                     end
                 end, playerId)
             else
-                QRCore.Functions.Notify(9, Lang:t("error.none_nearby"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+                QRCore.Functions.Notify(Lang:t("error.none_nearby"), 'error')
             end
         end
     end)

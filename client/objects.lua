@@ -74,7 +74,7 @@ RegisterNetEvent('police:client:spawnPObj', function(item)
         TriggerServerEvent("police:server:spawnObject", item)
     end, function() -- Cancel
         StopAnimTask(PlayerPedId(), "anim@narcotics@trash", "drop_front", 1.0)
-        QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.canceled"), 'error')
     end)
 end)
 
@@ -95,7 +95,7 @@ RegisterNetEvent('police:client:deleteObject', function()
             TriggerServerEvent("police:server:deleteObject", objectId)
         end, function() -- Cancel
             StopAnimTask(PlayerPedId(), "weapons@first_person@aim_rng@generic@projectile@thermal_charge@", "plant_floor", 1.0)
-            QRCore.Functions.Notif(9, Lang:t("error.canceled"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+            QRCore.Functions.Notify(Lang:t("error.canceled"), 'error')
         end)
     end
 end)
@@ -140,7 +140,7 @@ RegisterNetEvent('police:client:SpawnSpikeStrip', function()
             TriggerServerEvent('police:server:SyncSpikes', SpawnedSpikes)
         end
     else
-        QRCore.Functions.Notif(9, Lang:t("error.no_spikestripe"), 5000, 0, 'mp_lobby_textures', 'cross', 'COLOR_WHITE')
+        QRCore.Functions.Notify(Lang:t("error.no_spikestripe"), 'error')
     end
 end)
 

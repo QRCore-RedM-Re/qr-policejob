@@ -351,7 +351,6 @@ RegisterNetEvent('police:server:policeAlert', function(text)
     for k,v in pairs(players) do
         if v.PlayerData.job.name == 'police' and v.PlayerData.job.onduty then
             local alertData = {title = Lang:t('info.new_call'), coords = {coords.x, coords.y, coords.z}, description = text}
-            TriggerClientEvent("qr-phone:client:addPoliceAlert", v.PlayerData.source, alertData)
             TriggerClientEvent('police:client:policeAlert', v.PlayerData.source, coords, text)
         end
     end

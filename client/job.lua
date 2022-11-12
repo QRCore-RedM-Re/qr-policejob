@@ -264,23 +264,29 @@ RegisterNetEvent('police:client:OpenPersonalTrash', function()
 end)
 
 RegisterNetEvent('police:client:OpenArmory', function()
-    local authorizedItems = {
-        label = Lang:t('menu.pol_armory'),
-        slots = 30,
-        items = {}
-    }
-    -- local index = 1
-    for index, armoryItem in pairs(Config.Items.items) do
-        for i=1, #armoryItem.authorizedJobGrades do
-            if armoryItem.authorizedJobGrades[i] == PlayerJob.grade.level then
-                authorizedItems.items[index] = armoryItem
-                authorizedItems.items[index].slot = index
-                -- index = index + 1
-            end
-        end
-    end
-    SetWeaponSeries()
-    TriggerServerEvent("inventory:server:OpenInventory", "shop", "police", authorizedItems)
+    QRCore.Functions.GetPlayerData(function(PlayerData)
+        if PlayerData.job.name == "police" then
+			local authorizedItems = {
+				label = Lang:t('menu.pol_armory'),
+				slots = 30,
+				items = {}
+			}
+			local index = 1
+			for _, armoryItem in pairs(Config.Items.items) do
+				for i=1, #armoryItem.authorizedJobGrades do
+					if armoryItem.authorizedJobGrades[i] == PlayerData.job.grade.level then
+						authorizedItems.items[index] = armoryItem
+						authorizedItems.items[index].slot = index
+						index = index + 1
+					end
+				end
+			end
+			SetWeaponSeries()
+			TriggerServerEvent("inventory:server:OpenInventory", "shop", "police", authorizedItems)
+        else
+			QRCore.Functions.Notify('law enforcement only', 'error')
+		end
+    end)
 end)
 
 -- Threads

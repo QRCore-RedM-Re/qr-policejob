@@ -2,7 +2,6 @@
 local currentGarage = 1
 local inFingerprint = false
 local FingerPrintSessionId = nil
-local QRCore = exports['qr-core']:GetCoreObject()
 local PlayerJob = {}
 local onDuty = false
 
@@ -44,35 +43,24 @@ function TakeOutVehicle(vehicleInfo)
 end
 
 function MenuGarage()
-    local vehicleMenu = {
-        {
-            header = Lang:t('menu.garage_title'),
-            isMenuHeader = true
-        }
-    }
+    local vehicleMenu = {}
 
     local authorizedVehicles = Config.AuthorizedVehicles[QRCore.Functions.GetPlayerData().job.grade.level]
     for veh, label in pairs(authorizedVehicles) do
         vehicleMenu[#vehicleMenu+1] = {
-            header = label,
-            txt = "",
-            params = {
-                event = "police:client:TakeOutVehicle",
-                args = {
-                    vehicle = veh
-                }
-            }
+            title = label,
+            event = "police:client:TakeOutVehicle",
+            args = { vehicle = veh }
         }
     end
-    vehicleMenu[#vehicleMenu+1] = {
-        header = Lang:t('menu.close'),
-        txt = "",
-        params = {
-            event = "qr-menu:client:closeMenu"
-        }
 
-    }
-    exports['qr-menu']:openMenu(vehicleMenu)
+    lib.registerContext({
+        id = 'lawmen_vehicles',
+        title = Lang:t('menu.garage_title'),
+        menu = 'some_menu',
+        options = {vehicleMenu}
+    })
+    lib.showContext('lawmen_vehicles')
 end
 
 function CreatePrompts()
@@ -83,14 +71,14 @@ function CreatePrompts()
             args = {},
         })
     end
-    
+
     for k, v in pairs(Config.Locations["vehicle"]) do
         exports['qr-core']:createPrompt("police:vehicle_"..k, vector3(v.x, v.y, v.z), Config.PromptKey, 'Jobgarage', {
             type = 'client',
             event = 'police:client:promptVehicle',
             args = {k},
         })
-    end   
+    end
 
     for k,v in pairs(Config.Locations['evidence']) do
         exports['qr-core']:createPrompt('evidence_prompt_' .. k, v, 0xF3830D8E, 'Open Evidence Stash', {
@@ -305,14 +293,14 @@ CreateThread(function()
         Citizen.InvokeNative(0x9CB1A1623062F402, StationBlip, v.label)
         -- Citizen.ReturnResultAnyway()
     end
-    for k,v in pairs(QRCore.Shared.Weapons) do
+    for k,v in pairs(QRCore.Shared.GetWeapons()) do
         local weaponName = v.name
         local weaponLabel = v.label
         local weaponHash = GetHashKey(v.name)
         local weaponAmmo, weaponAmmoLabel = nil, 'unknown'
         if v.ammotype then
             weaponAmmo = v.ammotype:lower()
-            weaponAmmoLabel = QRCore.Shared.Items[weaponAmmo].label
+            weaponAmmoLabel = QRCore.Shared.GetItem(weaponAmmo).label
         end
 
         --print(weaponHash, weaponName, weaponLabel, weaponAmmo, weaponAmmoLabel)

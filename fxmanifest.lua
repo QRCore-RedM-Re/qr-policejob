@@ -8,6 +8,7 @@ version '1.0.0'
 shared_scripts {
     'config.lua',
     '@qr-core/shared/locale.lua',
+	'@ox_lib/init.lua',
     'locales/en.lua' -- Change this to your preferred language
 }
 

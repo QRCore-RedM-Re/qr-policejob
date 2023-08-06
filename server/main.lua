@@ -5,7 +5,6 @@ local Casings = {}
 local BloodDrops = {}
 local FingerDrops = {}
 local Objects = {}
-local QRCore = exports['qr-core']:GetCoreObject()
 
 -- Functions
 local function UpdateBlips()
@@ -115,7 +114,7 @@ QRCore.Commands.Add("pobject", Lang:t("commands.place_object"), {{name = "type",
         TriggerClientEvent('QRCore:Notify', src, Lang:t("error.on_duty_police_only"), 'error')
         return
     end
-    
+
     if type == "delete" then
         TriggerClientEvent("police:client:DeleteObject", src)
         return
@@ -124,7 +123,7 @@ QRCore.Commands.Add("pobject", Lang:t("commands.place_object"), {{name = "type",
     if Config.Objects[type] then
         TriggerClientEvent("police:client:SpawnPObj", src, type)
     end
-    
+
 end)
 
 QRCore.Commands.Add("cuff", Lang:t("commands.cuff_player"), {}, false, function(source, args)
@@ -227,7 +226,7 @@ QRCore.Commands.Add("takedna", Lang:t("commands.takedna"), {{name = "id", help =
                 dnalabel = DnaHash(OtherPlayer.PlayerData.citizenid)
             }
             if Player.Functions.AddItem("evidence_satchel", 1, false, info) then
-                TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
+                TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.GetItem("evidence_satchel"), "add")
             end
         else
             TriggerClientEvent('QRCore:Notify', src, Lang:t("error.have_evidence_bag"), 'error')
@@ -481,7 +480,7 @@ RegisterNetEvent('police:server:SeizeCash', function(playerId)
         local info = { cash = moneyAmount }
         SearchedPlayer.Functions.RemoveMoney("cash", moneyAmount, "police-cash-seized")
         Player.Functions.AddItem("moneybag", 1, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, QRCore.Shared.Items["moneybag"], "add")
+        TriggerClientEvent('inventory:client:ItemBox', src, QRCore.Shared.GetItem("moneybag"), "add")
         TriggerClientEvent('QRCore:Notify', SearchedPlayer.PlayerData.source, Lang:t("info.cash_confiscated"), 5000, 0, 'blips', 'blip_radius_search', 'COLOR_WHITE')
     end
 end)
@@ -550,7 +549,7 @@ RegisterNetEvent('evidence:server:AddBlooddropToInventory', function(bloodId, bl
     local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, bloodInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.GetItem("evidence_satchel"), "add")
             TriggerClientEvent("evidence:client:RemoveBlooddrop", -1, bloodId)
             BloodDrops[bloodId] = nil
         end
@@ -564,7 +563,7 @@ RegisterNetEvent('evidence:server:AddFingerprintToInventory', function(fingerId,
     local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, fingerInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.GetItem("evidence_satchel"), "add")
             TriggerClientEvent("evidence:client:RemoveFingerprint", -1, fingerId)
             FingerDrops[fingerId] = nil
         end
@@ -577,7 +576,7 @@ RegisterNetEvent('evidence:server:CreateCasing', function(weapon, coords)
     local src = source
     local Player = QRCore.Functions.GetPlayer(src)
     local casingId = CreateCasingId()
-    local weaponInfo = QRCore.Shared.Weapons[weapon]
+    local weaponInfo = QRCore.Shared.GetWeapon(weapon)
     local serieNumber = nil
     if weaponInfo then
         local weaponItem = Player.Functions.GetItemByName(weaponInfo["name"])
@@ -615,7 +614,7 @@ RegisterNetEvent('evidence:server:AddCasingToInventory', function(casingId, casi
     local Player = QRCore.Functions.GetPlayer(src)
     if Player.Functions.RemoveItem("satchel", 1) then
         if Player.Functions.AddItem("evidence_satchel", 1, false, casingInfo) then
-            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.Items["evidence_satchel"], "add")
+            TriggerClientEvent("inventory:client:ItemBox", src, QRCore.Shared.GetItem("evidence_satchel"), "add")
             TriggerClientEvent("evidence:client:RemoveCasing", -1, casingId)
             Casings[casingId] = nil
         end

@@ -154,3 +154,7 @@ Config.Items = {
         },
     }
 }
+
+---------------------------------------------
+
+QRCore = exports['qr-core']:GetCoreObject()

@@ -1,6 +1,4 @@
 -- Variables
-QRCore = exports['qr-core']:GetCoreObject()
-
 isHandcuffed = false
 cuffType = 1
 isEscorted = false

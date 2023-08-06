@@ -1,6 +1,5 @@
 -- Variables
 local isEscorting = false
-local QRCore = exports['qr-core']:GetCoreObject()
 
 -- Functions
 exports('IsHandcuffed', function()

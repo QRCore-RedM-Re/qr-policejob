@@ -1,5 +1,3 @@
-local QRCore = exports['qr-core']:GetCoreObject()
-
 -- Variables
 local CurrentStatusList = {}
 local Casings = {}
